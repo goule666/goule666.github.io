@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="高并发秒杀系统设计"><meta name="keywords" content="秒杀系统方案设计"><meta name="author" content="goule,undefined"><meta name="copyright" content="goule"><title>高并发秒杀系统设计 | Goule666's</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.3"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><link rel="dns-prefetch" href="https://unpkg.com"><link rel="stylesheet" type="text/css" href="https://unpkg.com/gitment@latest/style/default.css"><script src="https://unpkg.com/gitment@latest/dist/gitment.browser.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?6be97ea13f21df0089f072d2c65df905";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="dns-prefetch" href="https://www.google-analytics.com"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-117983959-1', 'auto');
+ga('send', 'pageview');</script><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  localSearch: {"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}"},"path":"search.xml"}
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://upload-images.jianshu.io/upload_images/6284737-4b7c9b985b79072b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></div><div class="author-info__name text-center">goule</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">3</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">2</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">2</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://upload-images.jianshu.io/upload_images/6284737-db815cc1baf28c75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">Goule666's</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">高并发秒杀系统设计</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-08-02</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/系统设计/">系统设计</a><div class="post-meta-wordcount"><span>Word count: </span><span class="word-count">552</span><span class="post-meta__separator">|</span><span>Reading time: 2 min</span></div></div></div></div><div class="layout" id="content-inner"><article id="post"><div id="post-content"><h3 id="实际应用场景"><a href="#实际应用场景" class="headerlink" title="实际应用场景"></a>实际应用场景</h3><p>小米在新品发布之后，往往会采用饥饿营销模式🤢，并且在整点抢购手机(比如：5万部小米8)，这个时候会出现秒杀的用户远大于手机库存的情况，如何做到以下两点？</p>
+<ol>
+<li>网站不会因为高流量瘫痪</li>
+<li>防止多卖或者库存不为负数</li>
+</ol>
+<h3 id="技术分析与方案："><a href="#技术分析与方案：" class="headerlink" title="技术分析与方案："></a>技术分析与方案：</h3><h5 id="分析："><a href="#分析：" class="headerlink" title="分析："></a>分析：</h5><ol>
+<li>限流：鉴于只有少部分用户能够秒杀成功，所以要限制大部分流量，只允许少部分流量进入服务后端。</li>
+<li>削锋：在秒杀的时候会产生瞬间的高流量，把高流量转换成一段时间的平稳的流量。</li>
+<li>内存缓存：避免击穿数据库，而且秒杀大多数是请求多，读写少，缓存场景比较适合。</li>
+</ol>
+<h5 id="方案："><a href="#方案：" class="headerlink" title="方案："></a>方案：</h5><ol>
+<li><p>前端方案</p>
+<ol>
+<li><strong>用户限流：</strong>在某一时间段内只允许用户提交一次请求，比如可以采取IP限流</li>
+<li><strong>禁止重复提交：</strong>用户提交之后按钮置灰，禁止重复提交 </li>
+<li><strong>页面静态化：</strong>将活动页面上的所有可以静态的元素全部静态化，并尽量减少动态元素。通过CDN来抗峰值。</li>
+<li><strong>验证码</strong>：在秒杀的时候加入，验证码或者小游戏，踢到大部分流量。</li>
+</ol>
+</li>
+<li><p>后端方案</p>
+<ol>
+<li><strong>排队队列长度</strong>：队列的长度可以设置为库存的2倍或者根据具体情况来定(防止少卖的情况发生)，当超过这个长度，直接返回秒杀已售罄。采用Redis的原子计数器（使用Redis的set结构可以做到去重，具体根据业务场景定），每产生一次请求increase一次，超过规定长度，返回秒杀已售罄，这样就限制了可参与秒杀的用户数量</li>
+<li><strong>消息队列</strong>：下单的操作，直接丢到消息队列中，异步返回排队中。采用Apache的RocketMq消息队列</li>
+<li><strong>缓存</strong>：使用缓存，提高读写效率。采用Redis</li>
+</ol>
+</li>
+<li><p>UML图</p>
+<ol>
+<li><p><img src="https://upload-images.jianshu.io/upload_images/6284737-61a84670f6b38430.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><strong>备注</strong>：前端会不断轮询/**/result接口，查询秒杀结果。</p>
+</li>
+</ol>
+</li>
+</ol>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">goule</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://goule666.github.io/2018/08/02/高并发秒杀/">http://goule666.github.io/2018/08/02/高并发秒杀/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/秒杀系统方案设计/">秒杀系统方案设计</a></div><nav id="pagination"><div class="next-post pull-right"><a href="/2018/05/04/学习计划/"><span></span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitment-container"></div><script>var gitment = new Gitment({
+  owner: 'goule666',
+  repo: 'goule666.github.io',
+  id: decodeURI(location.pathname),
+  oauth: {
+    client_id: 'f4660f7d16e0efa36ec4',
+    client_secret: '5d90c06aaa9fc4daa6780ee8f02219b6f38e69aa'
+  }
+})
+gitment.render('gitment-container')</script></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2018 By goule</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.3"></script><script src="/js/fancybox.js?version=1.5.3"></script><script src="/js/sidebar.js?version=1.5.3"></script><script src="/js/copy.js?version=1.5.3"></script><script src="/js/fireworks.js?version=1.5.3"></script><script src="/js/transition.js?version=1.5.3"></script><script src="/js/scroll.js?version=1.5.3"></script><script src="/js/head.js?version=1.5.3"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

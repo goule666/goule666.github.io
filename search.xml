@@ -3,6 +3,27 @@
   
     
     <entry>
+      <title>高并发秒杀系统设计</title>
+      <link href="/2018/08/02/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%A7%92%E6%9D%80/"/>
+      <url>/2018/08/02/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%A7%92%E6%9D%80/</url>
+      <content type="html"><![CDATA[<h3 id="实际应用场景"><a href="#实际应用场景" class="headerlink" title="实际应用场景"></a>实际应用场景</h3><p>小米在新品发布之后，往往会采用饥饿营销模式🤢，并且在整点抢购手机(比如：5万部小米8)，这个时候会出现秒杀的用户远大于手机库存的情况，如何做到以下两点？</p><ol><li>网站不会因为高流量瘫痪</li><li>防止多卖或者库存不为负数</li></ol><h3 id="技术分析与方案："><a href="#技术分析与方案：" class="headerlink" title="技术分析与方案："></a>技术分析与方案：</h3><h5 id="分析："><a href="#分析：" class="headerlink" title="分析："></a>分析：</h5><ol><li>限流：鉴于只有少部分用户能够秒杀成功，所以要限制大部分流量，只允许少部分流量进入服务后端。</li><li>削锋：在秒杀的时候会产生瞬间的高流量，把高流量转换成一段时间的平稳的流量。</li><li>内存缓存：避免击穿数据库，而且秒杀大多数是请求多，读写少，缓存场景比较适合。</li></ol><h5 id="方案："><a href="#方案：" class="headerlink" title="方案："></a>方案：</h5><ol><li><p>前端方案</p><ol><li><strong>用户限流：</strong>在某一时间段内只允许用户提交一次请求，比如可以采取IP限流</li><li><strong>禁止重复提交：</strong>用户提交之后按钮置灰，禁止重复提交 </li><li><strong>页面静态化：</strong>将活动页面上的所有可以静态的元素全部静态化，并尽量减少动态元素。通过CDN来抗峰值。</li><li><strong>验证码</strong>：在秒杀的时候加入，验证码或者小游戏，踢到大部分流量。</li></ol></li><li><p>后端方案</p><ol><li><strong>排队队列长度</strong>：队列的长度可以设置为库存的2倍或者根据具体情况来定(防止少卖的情况发生)，当超过这个长度，直接返回秒杀已售罄。采用Redis的原子计数器（使用Redis的set结构可以做到去重，具体根据业务场景定），每产生一次请求increase一次，超过规定长度，返回秒杀已售罄，这样就限制了可参与秒杀的用户数量</li><li><strong>消息队列</strong>：下单的操作，直接丢到消息队列中，异步返回排队中。采用Apache的RocketMq消息队列</li><li><strong>缓存</strong>：使用缓存，提高读写效率。采用Redis</li></ol></li><li><p>UML图</p><ol><li><p><img src="https://upload-images.jianshu.io/upload_images/6284737-61a84670f6b38430.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p><strong>备注</strong>：前端会不断轮询/**/result接口，查询秒杀结果。</p></li></ol></li></ol>]]></content>
+      
+      <categories>
+          
+          <category> 系统设计 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 秒杀系统方案设计 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title></title>
       <link href="/2018/05/04/%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/"/>
       <url>/2018/05/04/%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/</url>
