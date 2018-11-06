@@ -3,6 +3,27 @@
   
     
     <entry>
+      <title>当前学习计划</title>
+      <link href="/2018/11/06/%E5%BD%93%E5%89%8D%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/"/>
+      <url>/2018/11/06/%E5%BD%93%E5%89%8D%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/</url>
+      <content type="html"><![CDATA[<h3 id="如果想要有本事，如果想要和别人不一样，那么，请强大自己！"><a href="#如果想要有本事，如果想要和别人不一样，那么，请强大自己！" class="headerlink" title="如果想要有本事，如果想要和别人不一样，那么，请强大自己！"></a>如果想要有本事，如果想要和别人不一样，那么，请强大自己！</h3><p>当前时间：2018年11月06日15:34:58</p><p>先不说在家怎么样怎么样，如果在工作比较闲暇的时候，除了工作业务以外，抓住几个比较核心的中间件，kafka,zookeeper,redis</p><ol><li><p>说说kafka，这个消息中间件，我觉得很有必要学习下，虽然还有rocketmq，但是kafka是目前公司用的中间件，rocketmq已经会用了，而且知道一些业务场景，但是比如公司kafka出现啥问题了，如果这个时候，不会排除，不是很尴尬。所以首当其冲的第一个学习kafka。</p></li><li><p>zookeeper这个管理员，也是时候学习了，在分布式里面起了很大的作用，但是学习方向目前还有点未知。</p></li><li><p>Redis学习就跟着志超分享的网站来。（<a href="https://www.cnblogs.com/kismetv/p/8654978.html）" target="_blank" rel="noopener">https://www.cnblogs.com/kismetv/p/8654978.html）</a></p></li></ol>]]></content>
+      
+      <categories>
+          
+          <category> 学习计划 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 当前学习计划 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>高并发秒杀系统设计</title>
       <link href="/2018/08/02/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%A7%92%E6%9D%80/"/>
       <url>/2018/08/02/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%A7%92%E6%9D%80/</url>
