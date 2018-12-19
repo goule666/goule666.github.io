@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="深入浅出RocketMq"><meta name="keywords" content="RocketMq"><meta name="author" content="goule,undefined"><meta name="copyright" content="goule"><title>深入浅出RocketMq | Goule666's</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.3"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><link rel="dns-prefetch" href="https://unpkg.com"><link rel="stylesheet" type="text/css" href="https://unpkg.com/gitment@latest/style/default.css"><script src="https://unpkg.com/gitment@latest/dist/gitment.browser.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?6be97ea13f21df0089f072d2c65df905";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="dns-prefetch" href="https://www.google-analytics.com"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-117983959-1', 'auto');
+ga('send', 'pageview');</script><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  localSearch: {"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}"},"path":"search.xml"}
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://upload-images.jianshu.io/upload_images/6284737-4b7c9b985b79072b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></div><div class="author-info__name text-center">goule</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">7</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">5</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">4</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://upload-images.jianshu.io/upload_images/6284737-db815cc1baf28c75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">Goule666's</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">深入浅出RocketMq</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-11-06</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/消息队列/">消息队列</a><div class="post-meta-wordcount"><span>Word count: </span><span class="word-count">2,160</span><span class="post-meta__separator">|</span><span>Reading time: 7 min</span></div></div></div></div><div class="layout" id="content-inner"><article id="post"><div id="post-content"><h3 id="名词介绍"><a href="#名词介绍" class="headerlink" title="名词介绍"></a>名词介绍</h3><hr>
+<h5 id="Name-Server"><a href="#Name-Server" class="headerlink" title="Name Server"></a>Name Server</h5><p><em>介绍：类始于zookeeper在dubbo服务中的作用，作为寻址服务，用于把Broker的路由信息做聚合，客户端依靠NameServer去获取对应topic的路由信息，从而决定对哪些Broker做连接</em></p>
+<ul>
+<li>Name Server之间采取share-nothing的设计，互不通信。</li>
+<li>对于一个Name Server集群列表，客户端连接Name Server的时候，只会选择随机连接一个节点，以做到负载均衡。</li>
+<li>Name Server的所有状态都从Broker上报而来，本身不存储任何状态，不会影响和Broker的通讯，简而言之：Name Server如果挂了，不会影响客户端和正常的Broker之间的通讯，但是在挂掉之后新增的Broker客户端是感知不到的。</li>
+</ul>
+<h4 id="Broker"><a href="#Broker" class="headerlink" title="Broker"></a>Broker</h4><p><em>介绍：处理消息存储，转发等处理的服务器</em></p>
+<ul>
+<li>Broker是以group分开，每个group只允许一个master，若干个slave</li>
+<li>只有master才能进行写入操作，slave不允许</li>
+<li>slave从master中同步数据。同步策略取决于master的配置，可以采用同步双写，异步复制两种。</li>
+<li>客户端消费可以从master和slave消费。在默认情况下，消费者都从master消费，在master挂掉后，客户端由于从NameServer中感知到Broker挂机，就会从slave消费。</li>
+<li>Broker向所有的NameServer结点建立长连接，注册topic信息。</li>
+</ul>
+<h4 id="PushConsumer"><a href="#PushConsumer" class="headerlink" title="PushConsumer"></a>PushConsumer</h4><p><em>推送模式（RocketMq使用的是长轮询）的消费者。消息能及时被消费，使用简单。</em></p>
+<h4 id="PullConsumer"><a href="#PullConsumer" class="headerlink" title="PullConsumer"></a>PullConsumer</h4><p><em>拉取模式的消费者，应用主动控制拉取的时机，怎么拉取，怎么消费等。主动权更高。</em></p>
+<h4 id="Producer-Group"><a href="#Producer-Group" class="headerlink" title="Producer Group"></a>Producer Group</h4><p><em>标识发送同一类消息的生产者，通常发送逻辑一致。发送普通消息的时候，仅标识使用，并无特别用处。  若事务消息，如果某天发送某  条消息的producer-A宕机，是的事务消息一直处于PREPARED状态并超时，则broker会会查同一个group的其他producer-B，确定这条消息应该commit还是rollback。（已阉割此功能）</em></p>
+<h4 id="Consumer-Group"><a href="#Consumer-Group" class="headerlink" title="Consumer Group"></a>Consumer Group</h4><p><em>标识一类消费者的集合名称，这类消费者通常消费一类消息，且消费逻辑一致。同一个Consumer Group下的各个实例将共同消费topic的消息，起到负载均衡的作用。</em></p>
+<p><em>消费进度以Consumer Group为粒度管理，不同Consumer Group之间消费进度彼此不受影响，即消息A被Consumer Group1消费过，也会在给Consumer Group2消费。</em></p>
+<p><em>注：RocketMQ要求同一个Consumer Group的消费者必须要拥有相同的注册信息，即必须要一样的topic(并且tag也一样)。</em></p>
+<h4 id="Topic"><a href="#Topic" class="headerlink" title="Topic"></a>Topic</h4><p><em>标识一类消息的逻辑名字，消息的逻辑管理单位。无论消息生成还是消费，都需要指定Topic。</em></p>
+<h4 id="Tag"><a href="#Tag" class="headerlink" title="Tag"></a>Tag</h4><p><em>比topic粒度更细，同一个topic的消息虽然逻辑管理一样，但是消费topic的时候，如果订阅的时候指定的是tagA，那么tagB的消息将不会投递，也就不会消费。</em></p>
+<h4 id="Message-Queue"><a href="#Message-Queue" class="headerlink" title="Message Queue"></a>Message Queue</h4><p><em>简称Queue或Q，一个Topic将有若干个Q，若Topic同时创建在不同的Broker，则不同的Broker上都有若干Q，消息将物理的存储落在不同Broker结点上，具有水平扩展的能力。</em></p>
+<p><em>无论生产者还是消费者，实际的生成和消费都是针对Q级别。例如producer发送消息的时候，会预先选择（默认轮询）好该Topic下面的某一条Q发送；Consumer消费的时候也会负载均衡地分配若干个Q，只拉取对应Q的消息。</em></p>
+<p><em>每一条message queue均对应一个文件，这个文件存储了实际消息的索引信息。并且即使文件被删除，也能通过实际纯粹的消息文件（commit log）恢复回来。</em></p>
+<h4 id="Offset"><a href="#Offset" class="headerlink" title="Offset"></a>Offset</h4><p><em>偏移量，可以认为一条逻辑的message queue是无限长的数组。一条消息进来下标就会涨1。下标就是offset。</em></p>
+<p><em>一条message queue中的max offset表示消息的最大offset。max offset= 最新offset+1。</em></p>
+<p><em>min offset 则标识现存在的最小offset。</em></p>
+<p><em>消息存储一段时间后，消息会被物理地从磁盘删除，message queue的min offset也就对应增长。这意味着比min offset要小的那些消息已经不在broker上，无法被消费。</em></p>
+<h4 id="Consumer-Offset"><a href="#Consumer-Offset" class="headerlink" title="Consumer Offset"></a>Consumer Offset</h4><p><em>用于标记Consumer group在一条逻辑Message Queue上，消息消费到哪里了。</em></p>
+<ul>
+<li><em>注：从源码上看，这个数值是最新消费的那条消息的offset+1，所以实际上这个值存储的是【下次拉取的话，从哪里开始拉取的offset】。</em></li>
+</ul>
+<p><em>消费者拉取消息的时候需要指定offset，broker不主动推送消息，而是接受到请求的时候把存储的对应offset的消息返回给客户端。这个offset在成功消费后会更新到内存，并定时持久化。在集群消费模式下，会同步持久化到broker。在广播模式下，会持久化到本地文件。</em></p>
+<p><em>实例重启的时候会获取持久化的Consumer offset，用以决定从哪里开始消费。</em></p>
+<h4 id="集群消费"><a href="#集群消费" class="headerlink" title="集群消费"></a>集群消费</h4><p><em>消费者的一种消费模式。一个Consumer Group中的各个Consumer实例分摊去消费消息，即一条消息只会投递到一个Consumer group下面的一个实例。</em></p>
+<p><em>实际上，每个Consumer是平均分摊Message Queue的去做拉取消费。例如某个Topic有3条Q，其中一个Consumer Group有3个实例（可能是3个进程或者3台机器），那么每个实例只消费其中的一条Q。</em></p>
+<p><em>而由Producer发送消息的时候是轮询所有的Q，所以消息就会平均的散落在不同的Q上，可以认为Q上的消息是平均的。那么实例也就平均地消费消息了。</em></p>
+<p><em>这种模式下，消费进度的存储会持久化到Broker。</em></p>
+<h4 id="广播消费"><a href="#广播消费" class="headerlink" title="广播消费"></a>广播消费</h4><p><em>消费者的一种消费模式。消息将对一个Consumer Group的各个实例都投递一遍。</em></p>
+<p><em>实际上，是一个消费组下的每个消费者实例都获取到了topic下面的每个Message Queue去拉取消息。所以消息会投递到每个消费者实例。</em></p>
+<p><em>这种模式下，消费进度会存储持久化到实例本地。</em></p>
+<h4 id="顺序消息"><a href="#顺序消息" class="headerlink" title="顺序消息"></a>顺序消息</h4><p><em>消费消息的顺序要同发送消息的顺序一致。由于Consumer消费消息的时候是针对Message Queue顺序拉取并开始消费，且一条Message Queue只会给一个消费者（集群模式下），所以能够保证同一个消费者对于Q上消息的消费是顺序的开始消费（不一定顺序消费完成，因为消费可能并行）。</em></p>
+<p><em>在RocketMQ中，顺序消费主要指的都是Queue级别的局部顺序。这一类消息为满足顺序性，必须Producer单线程顺序发送，且发送到同一个队列，这样Consumer就可以按照Producer发送的顺序去消费消息。</em></p>
+<p><em>生产者发送的时候可以用MessageQueueSelector为某一批消息选择同一个Queue，则这一批消息的消费将是顺序消息（并由同一个Consumer完成消费）。或者Message Queue的数量只有1，但这样消费的实例只能有一个，多出来的实例都会空跑。</em></p>
+<h4 id="普通顺序消息"><a href="#普通顺序消息" class="headerlink" title="普通顺序消息"></a>普通顺序消息</h4><p><em>顺序消息的一种，正常情况下可以保证完全的顺序消息，但是一旦发生异常，Broker宕机或重启，由于队列总数发生变化，消费者会触发负载均衡，而默认地负载均衡算法采取哈希取模平均，这样负载均衡分配到定位的队列会发生变化，使得队列可能分配到别的实例上，则会短暂性的出现消息顺序不一致。</em></p>
+<p><em>如果业务能容忍在集群异常情况下（某个Broker宕机或重启），消息短暂的乱序，使用普通顺序方式最合适。</em></p>
+<h4 id="严格顺序消息"><a href="#严格顺序消息" class="headerlink" title="严格顺序消息"></a>严格顺序消息</h4><p><em>顺序消息的一种，无论正常异常情况都能保证顺序，但是牺牲了分布式failover（失效备援）特性，即Broker集群中只要有一台机器不可用，则整个集群都不可用，服务可用性大大降低。</em></p>
+<p><em>如果服务器部署为同步双写模式，此缺陷可通过备机自动切换为主避免，不过依然会存在几分钟的服务不可用。</em></p>
+<hr>
+<h3 id="水平扩展及负载均衡详解"><a href="#水平扩展及负载均衡详解" class="headerlink" title="水平扩展及负载均衡详解"></a>水平扩展及负载均衡详解</h3><hr>
+<h3 id="消息ACK机制及消费进度管理"><a href="#消息ACK机制及消费进度管理" class="headerlink" title="消息ACK机制及消费进度管理"></a>消息ACK机制及消费进度管理</h3><p>又是如何保证消息成功消费的</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">goule</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://goule666.github.io/2018/11/06/RocketMq/">http://goule666.github.io/2018/11/06/RocketMq/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/RocketMq/">RocketMq</a></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2018/11/06/当前学习计划/"><i class="fa fa-chevron-left">  </i><span>当前学习计划</span></a></div><div class="next-post pull-right"><a href="/2018/08/02/高并发秒杀/"><span>高并发秒杀系统设计</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitment-container"></div><script>var gitment = new Gitment({
+  owner: 'goule666',
+  repo: 'goule666.github.io',
+  id: decodeURI(location.pathname),
+  oauth: {
+    client_id: 'f4660f7d16e0efa36ec4',
+    client_secret: '5d90c06aaa9fc4daa6780ee8f02219b6f38e69aa'
+  }
+})
+gitment.render('gitment-container')</script></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2018 By goule</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.3"></script><script src="/js/fancybox.js?version=1.5.3"></script><script src="/js/sidebar.js?version=1.5.3"></script><script src="/js/copy.js?version=1.5.3"></script><script src="/js/fireworks.js?version=1.5.3"></script><script src="/js/transition.js?version=1.5.3"></script><script src="/js/scroll.js?version=1.5.3"></script><script src="/js/head.js?version=1.5.3"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
