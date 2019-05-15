@@ -1,0 +1,134 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="蚂蚁金服社招+校招面试题（知乎引入）"><meta name="keywords" content="蚂蚁金服面试题"><meta name="author" content="goule,undefined"><meta name="copyright" content="goule"><title>蚂蚁金服社招+校招面试题（知乎引入） | Goule666's</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.3"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><link rel="dns-prefetch" href="https://unpkg.com"><link rel="stylesheet" type="text/css" href="https://unpkg.com/gitment@latest/style/default.css"><script src="https://unpkg.com/gitment@latest/dist/gitment.browser.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?6be97ea13f21df0089f072d2c65df905";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="dns-prefetch" href="https://www.google-analytics.com"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-117983959-1', 'auto');
+ga('send', 'pageview');</script><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  localSearch: {"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}"},"path":"search.xml"}
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://upload-images.jianshu.io/upload_images/6284737-4b7c9b985b79072b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></div><div class="author-info__name text-center">goule</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">13</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">10</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">6</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://upload-images.jianshu.io/upload_images/6284737-db815cc1baf28c75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">Goule666's</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">蚂蚁金服社招+校招面试题（知乎引入）</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-05-15</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/面试题/">面试题</a><div class="post-meta-wordcount"><span>Word count: </span><span class="word-count">2,154</span><span class="post-meta__separator">|</span><span>Reading time: 7 min</span></div></div></div></div><div class="layout" id="content-inner"><article id="post"><div id="post-content"><p>年初得蚂蚁垂青（本人非985/211，蚂蚁真的不是很在乎学历！！！），有了一次社招机会，前后经历三关，受益匪浅，在此与各位朋友分享经历与心得。</p>
+<p><strong>需要更多Java面试资料和学习干货可以关注我的专栏Java进阶架构。</strong></p>
+<p>第一关：在线笔试</p>
+<p>笔试题内容如下：</p>
+<p>说明：</p>
+<p>构建一个本地缓存，缓存的对象是用户ID以及部分用户的信息。</p>
+<p>当从缓存中获取某个用户数据时，如果发现该用户数据上次更新时间超过30分钟，则需要更新一次该缓存。</p>
+<p>1.需考虑多线程访问的情况。</p>
+<p>2.请不要使用第三方类库实现。</p>
+<p>3.可以添加适当日志。</p>
+<p>4.可以有适当的伪代码。</p>
+<p>补充：UserInfo结构</p>
+<p>public class UserInfo {</p>
+<p>private String userId;</p>
+<p>private String userName;</p>
+<p>private String cardNo;</p>
+<p>//省略其它信息和getter 和setter</p>
+<p>}</p>
+<p>完成下面的代码</p>
+<p>//: TODO 可自行定义需要的变量</p>
+<p>/**</p>
+<p>* 初始化用户信息缓存</p>
+<p>*/</p>
+<p>public void initUserInfoCache() {</p>
+<p>//: TODO 完成此处的代码</p>
+<p>}</p>
+<p>/**</p>
+<p>* 根据id从缓存中获取用户信息</p>
+<p>*/</p>
+<p>public UserInfo getUserInfoFromCacheById(String id) {</p>
+<p>//: TODO 完成此处的代码</p>
+<p>}</p>
+<p>/**</p>
+<p>* 根据id更新缓存用户信息</p>
+<p>*/</p>
+<p>public void updateUserInfoCache(String id) {</p>
+<p>//: TODO 完成此处的代码</p>
+<p>}</p>
+<p>题目是让在 考虑多线程的情况下实现一个缓存，题目相对简单（经历过2016的阿里校招在线笔试，简答题难度至今 记(还)忆(是)犹(不)新(会)！！！），时间上要求宽松，24小时内答完即可。</p>
+<p>第二关：一轮电话面试</p>
+<p>笔试题提交完毕后，大约2天后，收到一个来自于杭州蚂蚁金服IP的固定电话，不巧当时正在另外一家单位面试，恰逢一面结束，等待二面的空隙里，没办法，接了电话果然是邀请马上进行一轮电面。内心是崩溃的…。和面试官说了暂时不方便，约了半小时后再开始，面试官很爽快的同意了。</p>
+<p>一开始依旧是自我介绍，一面提问的问题很多，很杂，涉及面很广，着重于基础，共面了55分钟左右。事后回忆问题如下：</p>
+<p>1.jvm内存管理和分配</p>
+<p>2.Redis</p>
+<p>3.数据库乐观锁</p>
+<p>3.currenthashmap的缺点</p>
+<p>4.数据库并发</p>
+<p>5.dubbo的调用模式，序列化</p>
+<p>6.事务的最大级别，跨库？跨表？</p>
+<p>7.dubbo上游100万，下游10万，如何处理</p>
+<p>8.用户一次请求访问web的详细过程（从浏览器到web服务器经历详细过程）</p>
+<p>9.spring的bean的周期</p>
+<p>10.详细说下参与的项目的架构</p>
+<p>11.hashmap 触发红黑树</p>
+<p>12.MySQL支持的跨库事务</p>
+<p>…</p>
+<p>第三关：二轮电话面试</p>
+<p>距离一面过了约一周，二面姗姗来迟。与一面的Java基础相比，二面更偏重于提问 经历的项目的架构，以及使用的框架的底层原理。（突破了会用的范围，理解框架的底层实现原理很重要，但这个很容易忽略!）。内心忐忑的聊了45分钟左右，结束了二面。</p>
+<p>事后回忆二面问题如下：</p>
+<p>1.说一说你最近参与的印象最深的项目，项目的架构，用到哪些技术</p>
+<p>2.说一说spring容器的实现方式</p>
+<p>3.说一说redis缓存应用场景</p>
+<p>4.说一说eletasic-job与其他job定时任务的区别，以及它的优点是什么</p>
+<p>…</p>
+<p>附框架学习图：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/6284737-da18a99fe699a9fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>总结：蚂蚁还是很看重基础和对框架的原理的理解程度的，说白了，对使用的技术，要知其然也知其所以然。无论是框架还是JavaAPI，底层的研究理解永远不能停。 大道至简，知易行难。</p>
+<p>欢迎点赞，让更多人看到<br><strong>面试内容如下：</strong></p>
+<h3 id="一、-电面："><a href="#一、-电面：" class="headerlink" title="一、 电面："></a><strong>一、 电面：</strong></h3><p>1.自我介绍<br>2.项目情况：</p>
+<p>（1.）对你来说影响最大的一个项目（该面试中有关项目问题都针对该项目展开）？<br>(2.)为什么会想做这个项目？这个项目的ideal是谁提出来的？<br>(3.)项目中如何实现的大数据的传输和存储<br>(4.)项目中哪一部分最难攻克？如何攻克？</p>
+<p><strong>3.基础知识考察：</strong></p>
+<p>(1.)模块化的好处<br>(2.)Htttp协议<br>(3.)hashmap和concurrenthashmap区别及两者的优缺点<br>(4.)对MySQL的了解，和oracle的区别<br>(5.)对设计模式的看法和认知<br>(6.)如何实现分布式缓存<br>(7.)多线程如何避免死锁<br>(8.)关于树的算法题-二叉树的锯齿形层次遍历<br>(9.)Java的垃圾回收机制<br>(10.)对Runtime的了解<br>(11.)有哪些设计模式</p>
+<ul>
+<li>电面过程中非常注重基础知识的考察，面试前务必对基础知识内容进行复习和梳理。基础知识考察的内容一般会围绕项目内容进行展开，在前期对项目介绍进行准备时需适当换位，思考面试官的提问逻辑，避免给自己设下陷阱。</li>
+</ul>
+<h3 id="二、-现场面："><a href="#二、-现场面：" class="headerlink" title="二、 现场面："></a><strong>二、 现场面：</strong></h3><p><strong>1.背景了解：</strong></p>
+<p>(1.)为什么要选择编程这条路<br>(2.)何时开始编程<br>(3.)如何进行自学<br>(4.)阅读过那些书籍</p>
+<p><strong>2.项目考察</strong></p>
+<p>(1.)项目运行过程中成员是否曾就某一点发生争执？作为Leader你是如何解决的？具体事例？<br>(2.)项目最终实现效果<br>(3.)项目具体部分使用的设计模式并简述选择理由<br>(4.)项目有何需改进之处并初拟改进方案<br>(5.)第一个项目：<br>(6.)第二个项目：</p>
+<p><strong>3.基础知识考察：</strong></p>
+<p>(1.)数据库的范式<br>(2.)JVM内存模型及调优<br>(3.)浏览器的缓存机制<br>(4.)如何解决高并发问题？是否进行过相应程序的编写？</p>
+<p><strong>4.LintCode 算法题 - 最小子串覆盖。</strong></p>
+<p><strong>5.想问的问题</strong></p>
+<p>技术面中项目占了相当一部分时间，项目中从技术到个人团队领导能力，从完成执行能力到思想灵活度，都是面试官希望得到的信息。因此，必须对自己的项目多方面展开准备，项目回顾的过程中需不断思考改进方案和具体措施。</p>
+<p>算法题部分由于之前练习时做过且在 <a href="https://link.zhihu.com/?target=http%3A//www.jiuzhang.com/solution" target="_blank" rel="noopener">www.jiuzhang.com/solution</a> 上研究过参考答案，此次应对较为轻松，面试官反应较好。在算法题考查过程中，正确率和代码效率都是面试官关注的重点，因此在Lintcode上刷题时必须强调每一个细节的改进，不能仅安于正确。上述参考网站中的标准答案工业风较强，适合实际工作，建议在刷题过程中充分利用。此外，面试前做两道算法题练手可使面试时写算法更为娴熟，如时间富裕可尝试。</p>
+<h3 id="三、-HR面："><a href="#三、-HR面：" class="headerlink" title="三、 HR面："></a><strong>三、 HR面：</strong></h3><p>1.业余爱好<br>2.为什么不参加竞赛？<br>3.你觉得你在项目运行过程中作为组长是否最大限度发挥了组员的优势？具体事例？<br>4.如何看待阿里在大数据方面的投入？对阿里的发展有什么建议？对蚂蚁金服的发展有什么看法？<br>5.职业规划，今后想发展的工作方向<br>6.家乡在哪里，是否愿意长期在杭州发展？<br>7.薪酬问题及入职情况</p>
+<ul>
+<li>适当藏拙很重要，因为作为面试者，我们很难判断什么不足对公司来说是无法容忍的，如果临场随性发挥，就容易出现语言漏洞，从而被作为切入点暴露自身缺陷。因此，面试前要仔细准备各种问题，对语言进行推敲，尽量将话题引向有利于自己的方向。</li>
+</ul>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a><strong>总结：</strong></h3><p>觉得收获的话可以点个关注收藏转发一波喔，谢谢大佬们支持。我特意整理了一下，有很多问题不是靠几句话能讲清楚，所以干脆录制了一些视频，用来回答这些面试题。很多问题其实答案很简单，但是背后的思考和逻辑不简单，要做到知其然还要知其所以然。想获取这些视频的可以私聊我，里有阿里大牛，另外有各种Java分布式、JVM、多线程等技术视频免费分享给大家。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">goule</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://goule666.github.io/2019/05/15/蚂蚁金服社招+校招面试题/">http://goule666.github.io/2019/05/15/蚂蚁金服社招+校招面试题/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/蚂蚁金服面试题/">蚂蚁金服面试题</a></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/05/15/菜鸟+腾讯校招面试题/"><i class="fa fa-chevron-left">  </i><span>菜鸟+腾讯（知乎引入）</span></a></div><div class="next-post pull-right"><a href="/2019/05/15/腾讯+蜂巢+头条校招面试题/"><span>腾讯+蜂巢+头条（知乎引入）</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitment-container"></div><script>var gitment = new Gitment({
+  owner: 'goule666',
+  repo: 'goule666.github.io',
+  id: decodeURI(location.pathname),
+  oauth: {
+    client_id: 'f4660f7d16e0efa36ec4',
+    client_secret: '5d90c06aaa9fc4daa6780ee8f02219b6f38e69aa'
+  }
+})
+gitment.render('gitment-container')</script></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2018 - 2019 By goule</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.3"></script><script src="/js/fancybox.js?version=1.5.3"></script><script src="/js/sidebar.js?version=1.5.3"></script><script src="/js/copy.js?version=1.5.3"></script><script src="/js/fireworks.js?version=1.5.3"></script><script src="/js/transition.js?version=1.5.3"></script><script src="/js/scroll.js?version=1.5.3"></script><script src="/js/head.js?version=1.5.3"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
