@@ -66,15 +66,6 @@
     </entry>
     
     <entry>
-      <title></title>
-      <link href="/2019/08/13/ConcurrentHashMap%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6-1/"/>
-      <url>/2019/08/13/ConcurrentHashMap%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6-1/</url>
-      <content type="html"><![CDATA[]]></content>
-      
-      
-    </entry>
-    
-    <entry>
       <title>内存泄漏分析</title>
       <link href="/2019/08/13/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF/"/>
       <url>/2019/08/13/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF/</url>
@@ -117,27 +108,6 @@
     </entry>
     
     <entry>
-      <title>网络IO</title>
-      <link href="/2019/07/09/%E7%BD%91%E7%BB%9CIO/"/>
-      <url>/2019/07/09/%E7%BD%91%E7%BB%9CIO/</url>
-      <content type="html"><![CDATA[<p>每次打开boss直聘都会看到，熟悉网络IO、多线程、集合等巴拉巴拉。</p><p>网络IO，熟悉又陌生的词语，自此，在工作之余，对网络IO、netty展开了学习！</p><p>网络IO，个人觉得可以从两方面来讲，不然很难理解其中的含义。</p><ol><li>Java提供的相关IO的操作类</li><li>操作系统层面的IO操作</li></ol><hr><h4 id="操作系统层面的IO操作（Linux）"><a href="#操作系统层面的IO操作（Linux）" class="headerlink" title="操作系统层面的IO操作（Linux）"></a>操作系统层面的IO操作（Linux）</h4><p>平时用的服务器一般都是以Linux为主，在Linux这样的操作系统中，线程本质上就是一个进程，所以重点看了下Linux的IO模型，在Linux中，共有五种IO模型，分别是：<strong>阻塞IO、非阻塞IO、IO复用、响应驱动IO、异步IO</strong></p><p><strong>到底什么是IO</strong></p><p>首先需要先介绍下到底什么是IO，一般来说，服务器端IO主要分两种：<strong>一是来自网络的IO</strong>，<strong>二是来自文件的IO</strong>，无论是哪一种，系统IO分为两个阶段：<strong>等待就绪</strong>和<strong>操作</strong>，等待就绪的过程是不使用CPU的，是在”空等”，而真正的读写操作是使用CPU的，这个过程很快，通常带宽在1GB/S级别以上。</p><p><strong>阻塞IO模型（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-01e04f90759852d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>应用进程（线程）通过系统调用==recvfrom==接受数据（阻塞），进入阻塞状态，但是内核数据报未准备好，需要等待（等待就绪），数据报准备好之后，进行数据报的复制（操作），然后返回给应用进程（线程），应用进程（线程）才能结束阻塞状态。</p><p><strong>非阻塞IO模式（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-40bb3d9f0edb40c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>应用进程通过系统调用==recvfrom==接受数据（非阻塞），操作系统收到之后，数据数据报没有准备好，直接返回error，应用进程收到error后，过段时间会再次系统调用，直到数据报准备好，在多次发送请求的时间段，线程可以做别的事情，所以是非阻塞。</p><p><strong>IO复用（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-36a3b424f50a9852.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>多个进程的IO可以注册到同一个==select==上，然后统一和内核进行交互，当管道中的某一个请求的数据报准备好之后，返回可读条件，然后进行通过==recvfrom==系统调用（阻塞），复制数据报，最后返回数据。</p><p><strong>响应驱动IO（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-5c35701f1104d9d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>应用进程向内核注册一个信号处理函数，内核直接返回用户，不阻塞，当数据报准备好的时候，通知应用进程，然后应用进程，调用==recvfrom==调用内核（阻塞），数据报复制好之后，返回。</p><p><strong>异步IO（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-6d2e688c0ed330f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>应用进程系统调用内核，内核直接返回，然后内核等待就绪和操作自己完成，完成之后通知应用进程。</p><p><strong>总结：</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-5970706475fe24fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><hr><h3 id="Java提供的相关IO的操作类"><a href="#Java提供的相关IO的操作类" class="headerlink" title="Java提供的相关IO的操作类"></a>Java提供的相关IO的操作类</h3><p>BIO（同步阻塞）、NIO（同步非阻塞）、AIO（异步非阻塞）</p><p><strong>BIO（图源网络）— 一请求一应答模型</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-1a8aa541ec9f8b7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>acceptor监听服务器端口，用来接受client的连接，当收到client的连接请求之后，为每个client创建一个新的线程进行链路处理，处理完成之后，通过输出流返回给client，典型的一请求一应答通信模型。</p><p><strong>伪异步IO（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-17af64a58aa9b287.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>引入线程池，降低线程的创建和回收成本，并且可以控制线程的最大数量。</p><p>伪异步IO是BIO的升级版，模型如图所示。acceptor监听服务器端口，用例接受client的连接，然后把后续的任务交给线程池来处理，线程池维护一个消息队列和N个活跃线程，线程池可以设置消息队列的大小和最大线程数，所以这种方式资源是可控的。</p><p>这种方式避免了为每一个请求创建独立线程造成的线程资源耗尽的问题，但是这种方式的底层依然是同步阻塞模型，所以无法根本解决问题。</p><p><strong>NIO（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-6f59e4800dcfab9d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>bossGroup线程组（dubbo中设置线程大小为1）实际是acceptor线程池，用来轮询监听服务器端口，接受客户端的连接请求，生成NioSocketChannel，然后NioSocketChannel注册到workerGroup其中的一个NioEventLoop中，多个Channel可以注册到一个selector中（<strong>I/O多路复用</strong>），<strong>操作（IO操作）</strong>依然是阻塞的，这样可以充分的利用CPU的资源。</p><p><strong>AIO（仅限于理论）</strong></p><p>在Java7之后引入了NIO2，也就是AIO（异步非阻塞），在NIO的网络操作中，提供了同步非阻塞的方法，其<strong>操作（IO操作）</strong>依然是阻塞的，然而AIO，<strong>操作（IO操作）</strong>也是非阻塞的。结果是通过通知的方式告知线程。</p><p>netty曾经尝试过AIO，但是后面放弃了，具体原因较为复杂，附上链接。<a href="https://github.com/netty/netty/issues/2515" target="_blank" rel="noopener">https://github.com/netty/netty/issues/2515</a></p>]]></content>
-      
-      <categories>
-          
-          <category> 网络IO </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 网络 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>单测</title>
       <link href="/2019/07/09/%E5%8D%95%E6%B5%8B-mock/"/>
       <url>/2019/07/09/%E5%8D%95%E6%B5%8B-mock/</url>
@@ -153,6 +123,27 @@
         <tags>
             
             <tag> mockito </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>网络IO</title>
+      <link href="/2019/07/09/%E7%BD%91%E7%BB%9CIO/"/>
+      <url>/2019/07/09/%E7%BD%91%E7%BB%9CIO/</url>
+      <content type="html"><![CDATA[<p>每次打开boss直聘都会看到，熟悉网络IO、多线程、集合等巴拉巴拉。</p><p>网络IO，熟悉又陌生的词语，自此，在工作之余，对网络IO、netty展开了学习！</p><p>网络IO，个人觉得可以从两方面来讲，不然很难理解其中的含义。</p><ol><li>Java提供的相关IO的操作类</li><li>操作系统层面的IO操作</li></ol><hr><h4 id="操作系统层面的IO操作（Linux）"><a href="#操作系统层面的IO操作（Linux）" class="headerlink" title="操作系统层面的IO操作（Linux）"></a>操作系统层面的IO操作（Linux）</h4><p>平时用的服务器一般都是以Linux为主，在Linux这样的操作系统中，线程本质上就是一个进程，所以重点看了下Linux的IO模型，在Linux中，共有五种IO模型，分别是：<strong>阻塞IO、非阻塞IO、IO复用、响应驱动IO、异步IO</strong></p><p><strong>到底什么是IO</strong></p><p>首先需要先介绍下到底什么是IO，一般来说，服务器端IO主要分两种：<strong>一是来自网络的IO</strong>，<strong>二是来自文件的IO</strong>，无论是哪一种，系统IO分为两个阶段：<strong>等待就绪</strong>和<strong>操作</strong>，等待就绪的过程是不使用CPU的，是在”空等”，而真正的读写操作是使用CPU的，这个过程很快，通常带宽在1GB/S级别以上。</p><p><strong>阻塞IO模型（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-01e04f90759852d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>应用进程（线程）通过系统调用==recvfrom==接受数据（阻塞），进入阻塞状态，但是内核数据报未准备好，需要等待（等待就绪），数据报准备好之后，进行数据报的复制（操作），然后返回给应用进程（线程），应用进程（线程）才能结束阻塞状态。</p><p><strong>非阻塞IO模式（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-40bb3d9f0edb40c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>应用进程通过系统调用==recvfrom==接受数据（非阻塞），操作系统收到之后，数据数据报没有准备好，直接返回error，应用进程收到error后，过段时间会再次系统调用，直到数据报准备好，在多次发送请求的时间段，线程可以做别的事情，所以是非阻塞。</p><p><strong>IO复用（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-36a3b424f50a9852.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>多个进程的IO可以注册到同一个==select==上，然后统一和内核进行交互，当管道中的某一个请求的数据报准备好之后，返回可读条件，然后进行通过==recvfrom==系统调用（阻塞），复制数据报，最后返回数据。</p><p><strong>响应驱动IO（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-5c35701f1104d9d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>应用进程向内核注册一个信号处理函数，内核直接返回用户，不阻塞，当数据报准备好的时候，通知应用进程，然后应用进程，调用==recvfrom==调用内核（阻塞），数据报复制好之后，返回。</p><p><strong>异步IO（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-6d2e688c0ed330f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>应用进程系统调用内核，内核直接返回，然后内核等待就绪和操作自己完成，完成之后通知应用进程。</p><p><strong>总结：</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-5970706475fe24fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><hr><h3 id="Java提供的相关IO的操作类"><a href="#Java提供的相关IO的操作类" class="headerlink" title="Java提供的相关IO的操作类"></a>Java提供的相关IO的操作类</h3><p>BIO（同步阻塞）、NIO（同步非阻塞）、AIO（异步非阻塞）</p><p><strong>BIO（图源网络）— 一请求一应答模型</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-1a8aa541ec9f8b7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>acceptor监听服务器端口，用来接受client的连接，当收到client的连接请求之后，为每个client创建一个新的线程进行链路处理，处理完成之后，通过输出流返回给client，典型的一请求一应答通信模型。</p><p><strong>伪异步IO（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-17af64a58aa9b287.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>引入线程池，降低线程的创建和回收成本，并且可以控制线程的最大数量。</p><p>伪异步IO是BIO的升级版，模型如图所示。acceptor监听服务器端口，用例接受client的连接，然后把后续的任务交给线程池来处理，线程池维护一个消息队列和N个活跃线程，线程池可以设置消息队列的大小和最大线程数，所以这种方式资源是可控的。</p><p>这种方式避免了为每一个请求创建独立线程造成的线程资源耗尽的问题，但是这种方式的底层依然是同步阻塞模型，所以无法根本解决问题。</p><p><strong>NIO（图源网络）</strong></p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-6f59e4800dcfab9d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>bossGroup线程组（dubbo中设置线程大小为1）实际是acceptor线程池，用来轮询监听服务器端口，接受客户端的连接请求，生成NioSocketChannel，然后NioSocketChannel注册到workerGroup其中的一个NioEventLoop中，多个Channel可以注册到一个selector中（<strong>I/O多路复用</strong>），<strong>操作（IO操作）</strong>依然是阻塞的，这样可以充分的利用CPU的资源。</p><p><strong>AIO（仅限于理论）</strong></p><p>在Java7之后引入了NIO2，也就是AIO（异步非阻塞），在NIO的网络操作中，提供了同步非阻塞的方法，其<strong>操作（IO操作）</strong>依然是阻塞的，然而AIO，<strong>操作（IO操作）</strong>也是非阻塞的。结果是通过通知的方式告知线程。</p><p>netty曾经尝试过AIO，但是后面放弃了，具体原因较为复杂，附上链接。<a href="https://github.com/netty/netty/issues/2515" target="_blank" rel="noopener">https://github.com/netty/netty/issues/2515</a></p>]]></content>
+      
+      <categories>
+          
+          <category> 网络IO </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 网络 </tag>
             
         </tags>
       
@@ -180,21 +171,21 @@
     </entry>
     
     <entry>
-      <title>随笔</title>
-      <link href="/2019/05/15/%E6%B5%AE%E8%BA%81%E7%9A%84%E6%88%91/"/>
-      <url>/2019/05/15/%E6%B5%AE%E8%BA%81%E7%9A%84%E6%88%91/</url>
-      <content type="html"><![CDATA[<p>​    现在是2019-05-15 16:23:19，这几天实在是被杭州的房价恶心🤢了一番，突然想到了回武汉发展，由此而来的随笔，诞生了。</p><p>​    18年4月份入农夫山泉，不可否认，公司氛围啊，什么的都还可以，但是工资一年没有涨，如果19年年底，也就是20年初，工资还没涨的话，或者涨幅少于20%的话，我觉得应该走了，杭州物价，房价一年比一年高，能力肯定也一年比一年强，我不想混吃等死，我重来不嫌麻烦，明年4月份，将面临两种选择，如下：</p><ol><li>辞职在杭州重新找工作，年薪幅度要达到25万左右。</li><li>回武汉找工作，年薪在20万左右。</li></ol><p>不管是在杭州重新找工作也好，还是回武汉找工作也好，都是需要好好准备一番的，说是准备，其实也算是复习吧！目前规划的是：</p><ol><li>分布式专题和性能优化专题看完。周期预算-2个月</li><li><strong>数据结构、计算机网络</strong>、计算机组成、操作系统。前两个作为重点。巩固基础，为进大厂做准备。周期预算-4个月</li><li>刷算法题，提高逻辑思维能力，虽然已经很强了😝，把没走过的路，走一遍。周期预算-2个月</li><li>刷面试题，虽然刷面试题很俗，但是不可否认，也是最有效的方式。周期预算-2个月</li><li>hashMap源码，spring核心源码，学习别人的设计模式。周期预算-2个月</li></ol>]]></content>
+      <title>蚂蚁金服社招+校招面试题（知乎引入）</title>
+      <link href="/2019/05/15/%E8%9A%82%E8%9A%81%E9%87%91%E6%9C%8D%E7%A4%BE%E6%8B%9B+%E6%A0%A1%E6%8B%9B%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
+      <url>/2019/05/15/%E8%9A%82%E8%9A%81%E9%87%91%E6%9C%8D%E7%A4%BE%E6%8B%9B+%E6%A0%A1%E6%8B%9B%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
+      <content type="html"><![CDATA[<p>年初得蚂蚁垂青（本人非985/211，蚂蚁真的不是很在乎学历！！！），有了一次社招机会，前后经历三关，受益匪浅，在此与各位朋友分享经历与心得。</p><p><strong>需要更多Java面试资料和学习干货可以关注我的专栏Java进阶架构。</strong></p><p>第一关：在线笔试</p><p>笔试题内容如下：</p><p>说明：</p><p>构建一个本地缓存，缓存的对象是用户ID以及部分用户的信息。</p><p>当从缓存中获取某个用户数据时，如果发现该用户数据上次更新时间超过30分钟，则需要更新一次该缓存。</p><p>1.需考虑多线程访问的情况。</p><p>2.请不要使用第三方类库实现。</p><p>3.可以添加适当日志。</p><p>4.可以有适当的伪代码。</p><p>补充：UserInfo结构</p><p>public class UserInfo {</p><p>private String userId;</p><p>private String userName;</p><p>private String cardNo;</p><p>//省略其它信息和getter 和setter</p><p>}</p><p>完成下面的代码</p><p>//: TODO 可自行定义需要的变量</p><p>/**</p><p>* 初始化用户信息缓存</p><p>*/</p><p>public void initUserInfoCache() {</p><p>//: TODO 完成此处的代码</p><p>}</p><p>/**</p><p>* 根据id从缓存中获取用户信息</p><p>*/</p><p>public UserInfo getUserInfoFromCacheById(String id) {</p><p>//: TODO 完成此处的代码</p><p>}</p><p>/**</p><p>* 根据id更新缓存用户信息</p><p>*/</p><p>public void updateUserInfoCache(String id) {</p><p>//: TODO 完成此处的代码</p><p>}</p><p>题目是让在 考虑多线程的情况下实现一个缓存，题目相对简单（经历过2016的阿里校招在线笔试，简答题难度至今 记(还)忆(是)犹(不)新(会)！！！），时间上要求宽松，24小时内答完即可。</p><p>第二关：一轮电话面试</p><p>笔试题提交完毕后，大约2天后，收到一个来自于杭州蚂蚁金服IP的固定电话，不巧当时正在另外一家单位面试，恰逢一面结束，等待二面的空隙里，没办法，接了电话果然是邀请马上进行一轮电面。内心是崩溃的…。和面试官说了暂时不方便，约了半小时后再开始，面试官很爽快的同意了。</p><p>一开始依旧是自我介绍，一面提问的问题很多，很杂，涉及面很广，着重于基础，共面了55分钟左右。事后回忆问题如下：</p><p>1.jvm内存管理和分配</p><p>2.Redis</p><p>3.数据库乐观锁</p><p>3.currenthashmap的缺点</p><p>4.数据库并发</p><p>5.dubbo的调用模式，序列化</p><p>6.事务的最大级别，跨库？跨表？</p><p>7.dubbo上游100万，下游10万，如何处理</p><p>8.用户一次请求访问web的详细过程（从浏览器到web服务器经历详细过程）</p><p>9.spring的bean的周期</p><p>10.详细说下参与的项目的架构</p><p>11.hashmap 触发红黑树</p><p>12.MySQL支持的跨库事务</p><p>…</p><p>第三关：二轮电话面试</p><p>距离一面过了约一周，二面姗姗来迟。与一面的Java基础相比，二面更偏重于提问 经历的项目的架构，以及使用的框架的底层原理。（突破了会用的范围，理解框架的底层实现原理很重要，但这个很容易忽略!）。内心忐忑的聊了45分钟左右，结束了二面。</p><p>事后回忆二面问题如下：</p><p>1.说一说你最近参与的印象最深的项目，项目的架构，用到哪些技术</p><p>2.说一说spring容器的实现方式</p><p>3.说一说redis缓存应用场景</p><p>4.说一说eletasic-job与其他job定时任务的区别，以及它的优点是什么</p><p>…</p><p>附框架学习图：</p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-da18a99fe699a9fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>总结：蚂蚁还是很看重基础和对框架的原理的理解程度的，说白了，对使用的技术，要知其然也知其所以然。无论是框架还是JavaAPI，底层的研究理解永远不能停。 大道至简，知易行难。</p><p>欢迎点赞，让更多人看到<br><strong>面试内容如下：</strong></p><h3 id="一、-电面："><a href="#一、-电面：" class="headerlink" title="一、 电面："></a><strong>一、 电面：</strong></h3><p>1.自我介绍<br>2.项目情况：</p><p>（1.）对你来说影响最大的一个项目（该面试中有关项目问题都针对该项目展开）？<br>(2.)为什么会想做这个项目？这个项目的ideal是谁提出来的？<br>(3.)项目中如何实现的大数据的传输和存储<br>(4.)项目中哪一部分最难攻克？如何攻克？</p><p><strong>3.基础知识考察：</strong></p><p>(1.)模块化的好处<br>(2.)Htttp协议<br>(3.)hashmap和concurrenthashmap区别及两者的优缺点<br>(4.)对MySQL的了解，和oracle的区别<br>(5.)对设计模式的看法和认知<br>(6.)如何实现分布式缓存<br>(7.)多线程如何避免死锁<br>(8.)关于树的算法题-二叉树的锯齿形层次遍历<br>(9.)Java的垃圾回收机制<br>(10.)对Runtime的了解<br>(11.)有哪些设计模式</p><ul><li>电面过程中非常注重基础知识的考察，面试前务必对基础知识内容进行复习和梳理。基础知识考察的内容一般会围绕项目内容进行展开，在前期对项目介绍进行准备时需适当换位，思考面试官的提问逻辑，避免给自己设下陷阱。</li></ul><h3 id="二、-现场面："><a href="#二、-现场面：" class="headerlink" title="二、 现场面："></a><strong>二、 现场面：</strong></h3><p><strong>1.背景了解：</strong></p><p>(1.)为什么要选择编程这条路<br>(2.)何时开始编程<br>(3.)如何进行自学<br>(4.)阅读过那些书籍</p><p><strong>2.项目考察</strong></p><p>(1.)项目运行过程中成员是否曾就某一点发生争执？作为Leader你是如何解决的？具体事例？<br>(2.)项目最终实现效果<br>(3.)项目具体部分使用的设计模式并简述选择理由<br>(4.)项目有何需改进之处并初拟改进方案<br>(5.)第一个项目：<br>(6.)第二个项目：</p><p><strong>3.基础知识考察：</strong></p><p>(1.)数据库的范式<br>(2.)JVM内存模型及调优<br>(3.)浏览器的缓存机制<br>(4.)如何解决高并发问题？是否进行过相应程序的编写？</p><p><strong>4.LintCode 算法题 - 最小子串覆盖。</strong></p><p><strong>5.想问的问题</strong></p><p>技术面中项目占了相当一部分时间，项目中从技术到个人团队领导能力，从完成执行能力到思想灵活度，都是面试官希望得到的信息。因此，必须对自己的项目多方面展开准备，项目回顾的过程中需不断思考改进方案和具体措施。</p><p>算法题部分由于之前练习时做过且在 <a href="https://link.zhihu.com/?target=http%3A//www.jiuzhang.com/solution" target="_blank" rel="noopener">www.jiuzhang.com/solution</a> 上研究过参考答案，此次应对较为轻松，面试官反应较好。在算法题考查过程中，正确率和代码效率都是面试官关注的重点，因此在Lintcode上刷题时必须强调每一个细节的改进，不能仅安于正确。上述参考网站中的标准答案工业风较强，适合实际工作，建议在刷题过程中充分利用。此外，面试前做两道算法题练手可使面试时写算法更为娴熟，如时间富裕可尝试。</p><h3 id="三、-HR面："><a href="#三、-HR面：" class="headerlink" title="三、 HR面："></a><strong>三、 HR面：</strong></h3><p>1.业余爱好<br>2.为什么不参加竞赛？<br>3.你觉得你在项目运行过程中作为组长是否最大限度发挥了组员的优势？具体事例？<br>4.如何看待阿里在大数据方面的投入？对阿里的发展有什么建议？对蚂蚁金服的发展有什么看法？<br>5.职业规划，今后想发展的工作方向<br>6.家乡在哪里，是否愿意长期在杭州发展？<br>7.薪酬问题及入职情况</p><ul><li>适当藏拙很重要，因为作为面试者，我们很难判断什么不足对公司来说是无法容忍的，如果临场随性发挥，就容易出现语言漏洞，从而被作为切入点暴露自身缺陷。因此，面试前要仔细准备各种问题，对语言进行推敲，尽量将话题引向有利于自己的方向。</li></ul><h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a><strong>总结：</strong></h3><p>觉得收获的话可以点个关注收藏转发一波喔，谢谢大佬们支持。我特意整理了一下，有很多问题不是靠几句话能讲清楚，所以干脆录制了一些视频，用来回答这些面试题。很多问题其实答案很简单，但是背后的思考和逻辑不简单，要做到知其然还要知其所以然。想获取这些视频的可以私聊我，里有阿里大牛，另外有各种Java分布式、JVM、多线程等技术视频免费分享给大家。</p>]]></content>
       
       <categories>
           
-          <category> 6不6 </category>
+          <category> 面试题 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 随笔 </tag>
+            <tag> 蚂蚁金服面试题 </tag>
             
         </tags>
       
@@ -243,48 +234,6 @@
     </entry>
     
     <entry>
-      <title>蚂蚁金服社招+校招面试题（知乎引入）</title>
-      <link href="/2019/05/15/%E8%9A%82%E8%9A%81%E9%87%91%E6%9C%8D%E7%A4%BE%E6%8B%9B+%E6%A0%A1%E6%8B%9B%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
-      <url>/2019/05/15/%E8%9A%82%E8%9A%81%E9%87%91%E6%9C%8D%E7%A4%BE%E6%8B%9B+%E6%A0%A1%E6%8B%9B%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
-      <content type="html"><![CDATA[<p>年初得蚂蚁垂青（本人非985/211，蚂蚁真的不是很在乎学历！！！），有了一次社招机会，前后经历三关，受益匪浅，在此与各位朋友分享经历与心得。</p><p><strong>需要更多Java面试资料和学习干货可以关注我的专栏Java进阶架构。</strong></p><p>第一关：在线笔试</p><p>笔试题内容如下：</p><p>说明：</p><p>构建一个本地缓存，缓存的对象是用户ID以及部分用户的信息。</p><p>当从缓存中获取某个用户数据时，如果发现该用户数据上次更新时间超过30分钟，则需要更新一次该缓存。</p><p>1.需考虑多线程访问的情况。</p><p>2.请不要使用第三方类库实现。</p><p>3.可以添加适当日志。</p><p>4.可以有适当的伪代码。</p><p>补充：UserInfo结构</p><p>public class UserInfo {</p><p>private String userId;</p><p>private String userName;</p><p>private String cardNo;</p><p>//省略其它信息和getter 和setter</p><p>}</p><p>完成下面的代码</p><p>//: TODO 可自行定义需要的变量</p><p>/**</p><p>* 初始化用户信息缓存</p><p>*/</p><p>public void initUserInfoCache() {</p><p>//: TODO 完成此处的代码</p><p>}</p><p>/**</p><p>* 根据id从缓存中获取用户信息</p><p>*/</p><p>public UserInfo getUserInfoFromCacheById(String id) {</p><p>//: TODO 完成此处的代码</p><p>}</p><p>/**</p><p>* 根据id更新缓存用户信息</p><p>*/</p><p>public void updateUserInfoCache(String id) {</p><p>//: TODO 完成此处的代码</p><p>}</p><p>题目是让在 考虑多线程的情况下实现一个缓存，题目相对简单（经历过2016的阿里校招在线笔试，简答题难度至今 记(还)忆(是)犹(不)新(会)！！！），时间上要求宽松，24小时内答完即可。</p><p>第二关：一轮电话面试</p><p>笔试题提交完毕后，大约2天后，收到一个来自于杭州蚂蚁金服IP的固定电话，不巧当时正在另外一家单位面试，恰逢一面结束，等待二面的空隙里，没办法，接了电话果然是邀请马上进行一轮电面。内心是崩溃的…。和面试官说了暂时不方便，约了半小时后再开始，面试官很爽快的同意了。</p><p>一开始依旧是自我介绍，一面提问的问题很多，很杂，涉及面很广，着重于基础，共面了55分钟左右。事后回忆问题如下：</p><p>1.jvm内存管理和分配</p><p>2.Redis</p><p>3.数据库乐观锁</p><p>3.currenthashmap的缺点</p><p>4.数据库并发</p><p>5.dubbo的调用模式，序列化</p><p>6.事务的最大级别，跨库？跨表？</p><p>7.dubbo上游100万，下游10万，如何处理</p><p>8.用户一次请求访问web的详细过程（从浏览器到web服务器经历详细过程）</p><p>9.spring的bean的周期</p><p>10.详细说下参与的项目的架构</p><p>11.hashmap 触发红黑树</p><p>12.MySQL支持的跨库事务</p><p>…</p><p>第三关：二轮电话面试</p><p>距离一面过了约一周，二面姗姗来迟。与一面的Java基础相比，二面更偏重于提问 经历的项目的架构，以及使用的框架的底层原理。（突破了会用的范围，理解框架的底层实现原理很重要，但这个很容易忽略!）。内心忐忑的聊了45分钟左右，结束了二面。</p><p>事后回忆二面问题如下：</p><p>1.说一说你最近参与的印象最深的项目，项目的架构，用到哪些技术</p><p>2.说一说spring容器的实现方式</p><p>3.说一说redis缓存应用场景</p><p>4.说一说eletasic-job与其他job定时任务的区别，以及它的优点是什么</p><p>…</p><p>附框架学习图：</p><p><img src="https://upload-images.jianshu.io/upload_images/6284737-da18a99fe699a9fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p><p>总结：蚂蚁还是很看重基础和对框架的原理的理解程度的，说白了，对使用的技术，要知其然也知其所以然。无论是框架还是JavaAPI，底层的研究理解永远不能停。 大道至简，知易行难。</p><p>欢迎点赞，让更多人看到<br><strong>面试内容如下：</strong></p><h3 id="一、-电面："><a href="#一、-电面：" class="headerlink" title="一、 电面："></a><strong>一、 电面：</strong></h3><p>1.自我介绍<br>2.项目情况：</p><p>（1.）对你来说影响最大的一个项目（该面试中有关项目问题都针对该项目展开）？<br>(2.)为什么会想做这个项目？这个项目的ideal是谁提出来的？<br>(3.)项目中如何实现的大数据的传输和存储<br>(4.)项目中哪一部分最难攻克？如何攻克？</p><p><strong>3.基础知识考察：</strong></p><p>(1.)模块化的好处<br>(2.)Htttp协议<br>(3.)hashmap和concurrenthashmap区别及两者的优缺点<br>(4.)对MySQL的了解，和oracle的区别<br>(5.)对设计模式的看法和认知<br>(6.)如何实现分布式缓存<br>(7.)多线程如何避免死锁<br>(8.)关于树的算法题-二叉树的锯齿形层次遍历<br>(9.)Java的垃圾回收机制<br>(10.)对Runtime的了解<br>(11.)有哪些设计模式</p><ul><li>电面过程中非常注重基础知识的考察，面试前务必对基础知识内容进行复习和梳理。基础知识考察的内容一般会围绕项目内容进行展开，在前期对项目介绍进行准备时需适当换位，思考面试官的提问逻辑，避免给自己设下陷阱。</li></ul><h3 id="二、-现场面："><a href="#二、-现场面：" class="headerlink" title="二、 现场面："></a><strong>二、 现场面：</strong></h3><p><strong>1.背景了解：</strong></p><p>(1.)为什么要选择编程这条路<br>(2.)何时开始编程<br>(3.)如何进行自学<br>(4.)阅读过那些书籍</p><p><strong>2.项目考察</strong></p><p>(1.)项目运行过程中成员是否曾就某一点发生争执？作为Leader你是如何解决的？具体事例？<br>(2.)项目最终实现效果<br>(3.)项目具体部分使用的设计模式并简述选择理由<br>(4.)项目有何需改进之处并初拟改进方案<br>(5.)第一个项目：<br>(6.)第二个项目：</p><p><strong>3.基础知识考察：</strong></p><p>(1.)数据库的范式<br>(2.)JVM内存模型及调优<br>(3.)浏览器的缓存机制<br>(4.)如何解决高并发问题？是否进行过相应程序的编写？</p><p><strong>4.LintCode 算法题 - 最小子串覆盖。</strong></p><p><strong>5.想问的问题</strong></p><p>技术面中项目占了相当一部分时间，项目中从技术到个人团队领导能力，从完成执行能力到思想灵活度，都是面试官希望得到的信息。因此，必须对自己的项目多方面展开准备，项目回顾的过程中需不断思考改进方案和具体措施。</p><p>算法题部分由于之前练习时做过且在 <a href="https://link.zhihu.com/?target=http%3A//www.jiuzhang.com/solution" target="_blank" rel="noopener">www.jiuzhang.com/solution</a> 上研究过参考答案，此次应对较为轻松，面试官反应较好。在算法题考查过程中，正确率和代码效率都是面试官关注的重点，因此在Lintcode上刷题时必须强调每一个细节的改进，不能仅安于正确。上述参考网站中的标准答案工业风较强，适合实际工作，建议在刷题过程中充分利用。此外，面试前做两道算法题练手可使面试时写算法更为娴熟，如时间富裕可尝试。</p><h3 id="三、-HR面："><a href="#三、-HR面：" class="headerlink" title="三、 HR面："></a><strong>三、 HR面：</strong></h3><p>1.业余爱好<br>2.为什么不参加竞赛？<br>3.你觉得你在项目运行过程中作为组长是否最大限度发挥了组员的优势？具体事例？<br>4.如何看待阿里在大数据方面的投入？对阿里的发展有什么建议？对蚂蚁金服的发展有什么看法？<br>5.职业规划，今后想发展的工作方向<br>6.家乡在哪里，是否愿意长期在杭州发展？<br>7.薪酬问题及入职情况</p><ul><li>适当藏拙很重要，因为作为面试者，我们很难判断什么不足对公司来说是无法容忍的，如果临场随性发挥，就容易出现语言漏洞，从而被作为切入点暴露自身缺陷。因此，面试前要仔细准备各种问题，对语言进行推敲，尽量将话题引向有利于自己的方向。</li></ul><h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a><strong>总结：</strong></h3><p>觉得收获的话可以点个关注收藏转发一波喔，谢谢大佬们支持。我特意整理了一下，有很多问题不是靠几句话能讲清楚，所以干脆录制了一些视频，用来回答这些面试题。很多问题其实答案很简单，但是背后的思考和逻辑不简单，要做到知其然还要知其所以然。想获取这些视频的可以私聊我，里有阿里大牛，另外有各种Java分布式、JVM、多线程等技术视频免费分享给大家。</p>]]></content>
-      
-      <categories>
-          
-          <category> 面试题 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 蚂蚁金服面试题 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>多线程实际应用</title>
-      <link href="/2019/05/15/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%AE%9E%E9%99%85%E8%BF%90%E7%94%A8%E5%9C%BA%E6%99%AF/"/>
-      <url>/2019/05/15/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%AE%9E%E9%99%85%E8%BF%90%E7%94%A8%E5%9C%BA%E6%99%AF/</url>
-      <content type="html"><![CDATA[<h3 id="一、数据库数据修复问题"><a href="#一、数据库数据修复问题" class="headerlink" title="一、数据库数据修复问题"></a>一、数据库数据修复问题</h3><p>由于历史遗留问题，现在地址需要统一规划，以前数据库vem_net_type表中有三个字段，province,city,county，分别代表省市区，现在数据库vem_net_type表新增了三个字段，provinceCode,cityCode,countyCode，分别代表省市区编码，任务是通过HTTP接口，把新增的三个字段值更新。（数据库数据大概有30万左右）</p><ol><li><p>方案一：脑袋里面第一反应，分页从数据库读取，然后循环，调用HTTP接口，赋值，更新</p><p>优化方案：把循环调用HTTP接口，改成一次性把所有数据查询出来，然后拼装成一个map，更新丢到线程池中，提高速度。</p><p><img src="/Users/wlnie/Library/Application Support/typora-user-images/image-20190515151056594.png" alt="image-20190515151056594"></p></li><li><p>方案二：启用两个线程，一个线程负责向队列扔数据，一个线程负责从队列中读取数据，做到边读边取。</p><p>具体：一个线程以1000为单位进行分页查询之后，把数据丢到队列中，另外一个线程，不断从队列中poll，poll到数据之后，调用HTTP接口，赋值，更新。</p></li></ol><p><img src="/Users/wlnie/Library/Application Support/typora-user-images/image-20190515151247725.png" alt="image-20190515151247725"></p><p><img src="/Users/wlnie/Library/Application Support/typora-user-images/image-20190515151313504.png" alt="image-20190515151313504"></p><p><img src="/Users/wlnie/Library/Application Support/typora-user-images/image-20190515151340475.png" alt="image-20190515151340475"></p>]]></content>
-      
-      <categories>
-          
-          <category> 多线程 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 多线程实际应用 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>dubbo理解</title>
       <link href="/2019/05/14/dubbo%E7%90%86%E8%A7%A3/"/>
       <url>/2019/05/14/dubbo%E7%90%86%E8%A7%A3/</url>
@@ -311,27 +260,6 @@
       <url>/2019/05/09/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/</url>
       <content type="html"><![CDATA[<p><img src="/Users/wlnie/Library/Application Support/typora-user-images/image-20190509163746468.png" alt="image-20190509163746468"></p>]]></content>
       
-      
-    </entry>
-    
-    <entry>
-      <title>zookeeper学习笔记-1</title>
-      <link href="/2019/02/14/zookeeper%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
-      <url>/2019/02/14/zookeeper%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-      <content type="html"><![CDATA[<p><strong>实际应用（典型）</strong>：</p><ol><li>Master-slave 选举（创建节点，只能有一个成功），2ddd14e24bc0275a1a49b7a69ac3684eebbaefc8</li><li>分布式锁（创建节点，只能有一个是成功），7ce84dc41a62a299d2631aa1d0de7f19d86f3926</li></ol>]]></content>
-      
-      <categories>
-          
-          <category> 分布式 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> zookeeper </tag>
-            
-        </tags>
       
     </entry>
     
