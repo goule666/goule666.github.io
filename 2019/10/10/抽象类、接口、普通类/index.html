@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="抽象类、接口、普通类"><meta name="keywords" content="Java基础"><meta name="author" content="goule,undefined"><meta name="copyright" content="goule"><title>抽象类、接口、普通类 | Goule666's</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.3"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><link rel="dns-prefetch" href="https://unpkg.com"><link rel="stylesheet" type="text/css" href="https://unpkg.com/gitment@latest/style/default.css"><script src="https://unpkg.com/gitment@latest/dist/gitment.browser.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?6be97ea13f21df0089f072d2c65df905";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="dns-prefetch" href="https://www.google-analytics.com"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-117983959-1', 'auto');
+ga('send', 'pageview');</script><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  localSearch: {"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}"},"path":"search.xml"}
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://upload-images.jianshu.io/upload_images/6284737-4b7c9b985b79072b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></div><div class="author-info__name text-center">goule</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">22</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">18</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">13</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://upload-images.jianshu.io/upload_images/6284737-db815cc1baf28c75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">Goule666's</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">抽象类、接口、普通类</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-10</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Java基础/">Java基础</a><div class="post-meta-wordcount"><span>Word count: </span><span class="word-count">600</span><span class="post-meta__separator">|</span><span>Reading time: 2 min</span></div></div></div></div><div class="layout" id="content-inner"><article id="post"><div id="post-content"><p>老生常谈的问题，这里记录一下：</p>
+<h1 id="抽象类、普通类、接口"><a href="#抽象类、普通类、接口" class="headerlink" title="抽象类、普通类、接口"></a>抽象类、普通类、接口</h1><h3 id="抽象类和普通类："><a href="#抽象类和普通类：" class="headerlink" title="抽象类和普通类："></a>抽象类和普通类：</h3><h4 id="区别与联系"><a href="#区别与联系" class="headerlink" title="区别与联系"></a>区别与联系</h4><ol>
+<li>实现接口和继承抽象类方面：<ol>
+<li>普通类实现接口，则必须实现这个接口的所有非default方法。</li>
+<li>抽象类实现接口，可以不实现接口的所有方法，但是在使用抽象类的时候（创建匿名类），接口中的非default方法必须在匿名类中实现，不然会出现编译报错</li>
+<li>普通类继承抽象类，则必须实现这个抽象类中的abstract方法</li>
+<li>抽象类继承抽象类，不必实现abstract方法<ol start="2">
+<li>实例化：</li>
+</ol>
+</li>
+<li>抽象类不可实例化，可以通过创建匿名类的方式来使用，代码例子见代码1.</li>
+</ol>
+</li>
+</ol>
+<h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p>抽象类的概念是由普通类的”共性”产生的，集中描述其共性，就会产生一个抽象性的概念。</p>
+<p>比如：N个普通类，只有少数几个普通类的A方法是个性的，其他的普通类的A方法是相同的，那么A方法可以抽象出来放在抽象类中去实现，这样只需要子类去继承抽象类即可。</p>
+<h3 id="抽象类和接口："><a href="#抽象类和接口：" class="headerlink" title="抽象类和接口："></a>抽象类和接口：</h3><h4 id="区别与联系-1"><a href="#区别与联系-1" class="headerlink" title="区别与联系"></a>区别与联系</h4><ol>
+<li>抽象类和接口一样都无法实例化，但是抽象类具有构造器，接口不具有构造器</li>
+<li>接口里面的变量是不可变常量，抽象类的变量可以是任意属性</li>
+<li><strong>抽象类和接口都是用来抽象具体对象的，接口的抽象级别更高</strong></li>
+</ol>
+<h4 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h4><p>抽象类表示的是，这个对象是什么，共性有哪些。接口表示的是，这个对象拥有哪些功能，能做什么。</p>
+<p>比如：男人和女人，抽象类是人类，猫和狗的抽象类是宠物类，人类可以吃东西，宠物类也可以吃东西。所以吃东西应该放在接口中，人类和宠物类是两个抽象类</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><ol>
+<li><p>代码1</p>
+<ol>
+<li><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//class com.goule666.study.witness.java.basic.abstractclass.Test$1</span></span><br><span class="line">        <span class="comment">//匿名类</span></span><br><span class="line">        AbstractRemoteCallBack callBack = <span class="keyword">new</span> AbstractRemoteCallBack()&#123;</span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * 成功</span></span><br><span class="line"><span class="comment">             *</span></span><br><span class="line"><span class="comment">             * <span class="doctag">@param</span> data data</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">(Object data)</span> </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">"成功"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="抽象类、接口类、普通类的类图如下"><a href="#抽象类、接口类、普通类的类图如下" class="headerlink" title="抽象类、接口类、普通类的类图如下"></a>抽象类、接口类、普通类的类图如下</h3><ol>
+<li>Demo 中的UML类图如下：<ol>
+<li><img src="/Users/wlnie/Library/Application%20Support/typora-user-images/image-20191010141258998.png" alt="image-20191010141258998"></li>
+</ol>
+</li>
+<li></li>
+</ol>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">goule</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://goule666.github.io/2019/10/10/抽象类、接口、普通类/">http://goule666.github.io/2019/10/10/抽象类、接口、普通类/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java基础/">Java基础</a></div><nav id="pagination"><div class="next-post pull-right"><a href="/2019/10/09/责任链模式/"><span>责任链模式</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitment-container"></div><script>var gitment = new Gitment({
+  owner: 'goule666',
+  repo: 'goule666.github.io',
+  id: decodeURI(location.pathname),
+  oauth: {
+    client_id: 'f4660f7d16e0efa36ec4',
+    client_secret: '5d90c06aaa9fc4daa6780ee8f02219b6f38e69aa'
+  }
+})
+gitment.render('gitment-container')</script></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2018 - 2019 By goule</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.3"></script><script src="/js/fancybox.js?version=1.5.3"></script><script src="/js/sidebar.js?version=1.5.3"></script><script src="/js/copy.js?version=1.5.3"></script><script src="/js/fireworks.js?version=1.5.3"></script><script src="/js/transition.js?version=1.5.3"></script><script src="/js/scroll.js?version=1.5.3"></script><script src="/js/head.js?version=1.5.3"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
